@@ -8,6 +8,7 @@ const passport = require('passport');
 
 // Load Input validation
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 
 // Load User model
 const User = require('../../models/User');
@@ -21,11 +22,12 @@ router.get('/test', (req, res) => res.json({ msg: "Users Works" }));
 // @description Register user//
 // @access      public
 router.post('/register', (req, res) => {
+    //check validation for registration
     const { errors, isValid } = validateRegisterInput(req.body);
-    //check validation 
     if(!isValid) {
         return res.status(400).json(errors);
     }
+    // validation check end 
 
     User.findOne({ email: req.body.email })
     .then(user => {
@@ -65,6 +67,12 @@ router.post('/register', (req, res) => {
 // @description login user// returning the jwt token
 // @access      public
 router.post('/login', (req, res) => {
+    //check validation for registration
+    const { errors, isValid } = validateLoginInput(req.body);
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+    // validation check end
     const email = req.body.email;
     const password = req.body.password;
 
@@ -73,7 +81,8 @@ router.post('/login', (req, res) => {
     .then(user => {
         // check for user //
         if(!user) {
-            return res.status(404).json({ email: "user email not found" });
+            errors.email = 'User Email not found'
+            return res.status(404).json(errors);
         } 
         // check password //
         bcrypt.compare(password, user.password)
@@ -95,7 +104,8 @@ router.post('/login', (req, res) => {
                     }
                 );
             } else {
-                return res.status(400).json({ password: "incorrect password"});
+                errors.password = "incorrect password"
+                return res.status(400).json(errors);
             }
         })
     })
