@@ -20,7 +20,8 @@ mongoose
     .connect(db, 
         { 
             useNewUrlParser: true, // Need this for API support
-            useUnifiedTopology: true // to the MongoClient Constructor
+            useUnifiedTopology: true, // to the MongoClient Constructor
+            useFindAndModify: false
         }
     )
     .then(() => console.log('MongoDB Connected'))
