@@ -15,6 +15,7 @@ const User = require('../../models/User');
 // @access public //
 router.get('/test', (req, res) => res.json({msg: 'profile works'}));
 
+
 // @route Get request to api/profile//
 // @description get current user profile  //
 // @access private //
@@ -33,8 +34,26 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req,res)=> {
     .catch(err => res.status(404).json(err));
 });
 
+
+// @route get request to api/all //
+// @description get all user profiles  //
+// @access public //
+router.get('/all', (req, res) => {
+    Profile.find()
+    .populate('user', ['name', 'avatar'])
+    .then(profiles => {
+        if(!profiles) {
+            errors.noprofile = 'There are no profiles';
+            return res.status(404).json(errors);
+        }
+        res.json(profiles);
+    })
+    .catch(err => res.status(404).json({profile:'there are no profiles'}));
+})
+
+
 // @route get request to api/profile/handle/:handle //
-// @description create or update user profile  //
+// @description get user profile by handle  //
 // @access public //
 router.get('/handle/:handle', (req, res)=> {
     const errors = {};
@@ -50,6 +69,7 @@ router.get('/handle/:handle', (req, res)=> {
     .catch(err => res.status(404).json(err));
 })
 
+
 // @route get request to api/profile/usere/:user_id //
 // @description get profile user ID  //
 // @access public //
@@ -64,8 +84,10 @@ router.get('/user/:user_id', (req, res)=> {
         }
         res.json(profile);
     })
-    .catch(err => res.status(404).json({profile:'ther is no profile for this user'}));
+    .catch(err => res.status(404).json({profile:'there is no profile for this user'}));
 })
+
+
 // @route post request to api/profile//
 // @description create or edit user profile  //
 // @access private //
