@@ -92,8 +92,37 @@ router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req,
            }
            // Add user id to likes array
            post.likes.unshift({ user: req.user.id });
-           post.save().
-           then(post => res.json(post));
+           post.save()
+           .then(post => res.json(post));
+        })
+        .catch(err => res.status(404).json({ postnotfound : 'Post not found' }));
+    });
+});
+
+// @route POST api/post/unlike/:id //
+// @description unlike Blog Posts //
+// @access private //
+router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (req, res)=>{
+    Profile.findOne({ user: req.user.id })
+    .then(profile => {
+        Post.findById(req.params.id)
+        .then(post => {
+            // check if the post has been liked //
+           if(post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+            return res.status(400).json({ notliked: 'You have not yet liked post' });
+           }
+
+           // get removed index //
+           const removeIndex = post.likes
+           .map(item => item.user.toString())
+           .indexOf(req.user.id);
+
+           //splice out array //
+           post.likes.splice(removeIndex, 1);
+           // save to db//
+
+           post.save()
+           .then(post => res.json(post));
         })
         .catch(err => res.status(404).json({ postnotfound : 'Post not found' }));
     });
