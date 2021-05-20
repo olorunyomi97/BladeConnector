@@ -6,7 +6,7 @@ class Navbar extends Component {
             <div>
                 <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
                     <div className="container">
-                    <a className="navbar-brand" href="landing.html">DevConnector</a>
+                    <a className="navbar-brand" href="landing.html">BladeConnector</a>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#mobile-nav">
                         <span className="navbar-toggler-icon"></span>
                     </button>
